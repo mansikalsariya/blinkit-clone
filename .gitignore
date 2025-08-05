@@ -1,0 +1,19 @@
+# Node.js
+server/node_modules/
+server/.env
+
+# React
+client/node_modules/
+client/build/
+client/.env
+
+# Logs
+*.log
+
+# System
+.DS_Store
+Thumbs.db
+
+# Vercel
+.vercel/
+.env.local
