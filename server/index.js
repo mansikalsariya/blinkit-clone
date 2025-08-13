@@ -16,19 +16,20 @@ import addressRouter from './route/address.route.js';
 import orderRouter from './route/order.route.js';
 
 // Load Environment Variables
-
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-
+// CORS Setup for frontend
 app.use(cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    origin: process.env.FRONTEND_URL,
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
     methods: ["GET", "POST", "PUT", "DELETE"]
 }));
+
+//  Middlewares
 app.use(express.json());
 app.use(cookieParser());
 app.use(morgan("dev"));
@@ -49,15 +50,15 @@ app.use("/api/cart", cartRouter);
 app.use("/api/address", addressRouter);
 app.use('/api/order', orderRouter);
 
-// Start Server
+//  Start Server
 const startServer = async () => {
     try {
         await connectDB();
         app.listen(PORT, () => {
-            console.log(`🚀 Server is running on http://localhost:${PORT}`);
+            console.log(` Server is running on http://localhost:${PORT}`);
         });
     } catch (error) {
-        console.error("❌ MongoDB Connection Error:", error);
+        console.error("MongoDB Connection Error:", error);
         process.exit(1);
     }
 };
