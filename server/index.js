@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import helmet from 'helmet';
+import path from 'path'; 
 import connectDB from './config/connectDB.js';
 
 import userRouter from './route/user.route.js';
@@ -20,14 +21,19 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 8080;
+const __dirname = path.resolve(); 
 
 // CORS Setup for frontend
 app.use(cors({
-    origin: process.env.FRONTEND_URL,
+    origin: [
+        process.env.FRONTEND_URL, 
+        "http://localhost:5173"   
+    ],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
     methods: ["GET", "POST", "PUT", "DELETE"]
 }));
+
 
 //  Middlewares
 app.use(express.json());
@@ -36,7 +42,7 @@ app.use(morgan("dev"));
 app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 
-// Routes
+// API Routes
 app.get("/", (req, res) => {
     res.json({ message: `🚀 Server is running on PORT ${PORT}` });
 });
@@ -49,6 +55,12 @@ app.use("/api/product", productRouter);
 app.use("/api/cart", cartRouter);
 app.use("/api/address", addressRouter);
 app.use('/api/order', orderRouter);
+
+app.use(express.static(path.join(__dirname, "client/dist"))); 
+
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "client/dist", "index.html"));
+});
 
 //  Start Server
 const startServer = async () => {
