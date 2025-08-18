@@ -4,7 +4,6 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import helmet from "helmet";
-import path from "path";
 import connectDB from "./config/connectDB.js";
 
 // Routers
@@ -22,7 +21,6 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 8080;
-const __dirname = path.resolve();
 
 app.use(
   cors({
@@ -46,7 +44,7 @@ app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 // API Routes
 // =========================
 app.get("/", (req, res) => {
-  res.json({ message: ` Server is running on PORT ${PORT}` });
+  res.json({ message: `API is running on PORT ${PORT}` });
 });
 
 app.use("/api/user", userRouter);
@@ -57,15 +55,6 @@ app.use("/api/product", productRouter);
 app.use("/api/cart", cartRouter);
 app.use("/api/address", addressRouter);
 app.use("/api/order", orderRouter);
-
-// =========================
-// Serve Frontend (Build)
-// =========================
-app.use(express.static(path.join(__dirname, "client/dist")));
-
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "client/dist", "index.html"));
-});
 
 // =========================
 //  Start Server
