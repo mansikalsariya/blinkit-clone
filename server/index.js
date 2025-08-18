@@ -24,14 +24,11 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 const __dirname = path.resolve();
 
-// =========================
-// 🔐 Middlewares
-// =========================
 app.use(
   cors({
     origin: [
-      process.env.FRONTEND_URL, // from .env
-      "http://localhost:5173", // dev
+      process.env.FRONTEND_URL, 
+      "http://localhost:5173", 
     ],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -46,10 +43,10 @@ app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 
 // =========================
-// 🚀 API Routes
+// API Routes
 // =========================
 app.get("/", (req, res) => {
-  res.json({ message: `🚀 Server is running on PORT ${PORT}` });
+  res.json({ message: ` Server is running on PORT ${PORT}` });
 });
 
 app.use("/api/user", userRouter);
@@ -62,7 +59,7 @@ app.use("/api/address", addressRouter);
 app.use("/api/order", orderRouter);
 
 // =========================
-// 📦 Serve Frontend (Build)
+// Serve Frontend (Build)
 // =========================
 app.use(express.static(path.join(__dirname, "client/dist")));
 
@@ -71,16 +68,16 @@ app.get("*", (req, res) => {
 });
 
 // =========================
-// 🔥 Start Server
+//  Start Server
 // =========================
 const startServer = async () => {
   try {
     await connectDB();
     app.listen(PORT, () => {
-      console.log(`✅ Server running at: http://localhost:${PORT}`);
+      console.log(` Server running at: http://localhost:${PORT}`);
     });
   } catch (error) {
-    console.error("❌ MongoDB Connection Error:", error.message);
+    console.error(" MongoDB Connection Error:", error.message);
     process.exit(1);
   }
 };
