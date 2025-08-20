@@ -16,26 +16,39 @@ import cartRouter from "./route/cart.route.js";
 import addressRouter from "./route/address.route.js";
 import orderRouter from "./route/order.route.js";
 
-// Load Environment Variables
+// Load env
 dotenv.config();
-
 const app = express();
 const PORT = process.env.PORT || 8080;
 
 // =========================
-// CORS Setup
+// CORS Fix
 // =========================
+const allowedOrigins = [
+  process.env.FRONTEND_URL, 
+  "http://localhost:5173"   
+];
+
 app.use(
   cors({
-    origin: [
-      process.env.FRONTEND_URL,       // Netlify frontend
-      "http://localhost:5173",        // Local development
-    ],
+    origin: allowedOrigins,
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
     methods: ["GET", "POST", "PUT", "DELETE"],
   })
 );
+
+// Extra fix: headers manually set
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  }
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type,Authorization");
+  next();
+});
 
 app.use(express.json());
 app.use(cookieParser());
@@ -43,11 +56,9 @@ app.use(morgan("dev"));
 app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 
-// =========================
-// API Routes
-// =========================
+// Routes
 app.get("/", (req, res) => {
-  res.json({ message: `✅ Server is running on PORT ${PORT}` });
+  res.json({ message: ` Server running on PORT ${PORT}` });
 });
 
 app.use("/api/user", userRouter);
@@ -59,9 +70,7 @@ app.use("/api/cart", cartRouter);
 app.use("/api/address", addressRouter);
 app.use("/api/order", orderRouter);
 
-// =========================
-// Start Server
-// =========================
+// Start
 const startServer = async () => {
   try {
     await connectDB();
@@ -69,7 +78,7 @@ const startServer = async () => {
       console.log(`Server running at: http://localhost:${PORT}`);
     });
   } catch (error) {
-    console.error(" MongoDB Connection Error:", error.message);
+    console.error(" MongoDB Error:", error.message);
     process.exit(1);
   }
 };
