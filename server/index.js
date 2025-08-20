@@ -22,11 +22,14 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 8080;
 
+// =========================
+// CORS Setup
+// =========================
 app.use(
   cors({
     origin: [
-      process.env.FRONTEND_URL, 
-      "http://localhost:5173", 
+      process.env.FRONTEND_URL,       // Netlify frontend
+      "http://localhost:5173",        // Local development
     ],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -44,7 +47,7 @@ app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 // API Routes
 // =========================
 app.get("/", (req, res) => {
-  res.json({ message: `API is running on PORT ${PORT}` });
+  res.json({ message: `✅ Server is running on PORT ${PORT}` });
 });
 
 app.use("/api/user", userRouter);
@@ -57,13 +60,13 @@ app.use("/api/address", addressRouter);
 app.use("/api/order", orderRouter);
 
 // =========================
-//  Start Server
+// Start Server
 // =========================
 const startServer = async () => {
   try {
     await connectDB();
     app.listen(PORT, () => {
-      console.log(` Server running at: http://localhost:${PORT}`);
+      console.log(`Server running at: http://localhost:${PORT}`);
     });
   } catch (error) {
     console.error(" MongoDB Connection Error:", error.message);
